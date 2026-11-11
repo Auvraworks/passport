@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passport test</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background:#FBEAF5; color:#3A2350; }
+  header { padding:12px; font-weight:bold; font-size:20px; color:#fff;
+           background:linear-gradient(90deg,#6C8CFF,#FF8FC7,#FFA774); }
+  #status, .row { padding:12px; font-size:14px; border-bottom:1px dashed #3A2350; }
+  button, a.go { display:inline-block; padding:8px 14px; border-radius:20px; border:0;
+                 background:#FFA774; color:#3A2350; text-decoration:none; font-size:14px; cursor:pointer; }
+</style>
+</head>
+<body>
+<header>passport test</header>
+<div id="status">Loading from Supabase...</div>
+<div class="row"><button onclick="document.getElementById('clicked').textContent='Click works! '+new Date().toLocaleTimeString()">Click test</button> <span id="clicked"></span></div>
+<div class="row"><a class="go" href="secondlife://Shutty%20World/128/128/25">Teleport link test</a></div>
+<div id="filler"></div>
+<script>
+  const SUPABASE_URL = "https://dlcaafqwxbendgksxbae.supabase.co";   // <<< CHANGE
+  const API_KEY = "sb_publishable__gF9D8Uf51a75w6rbryw6A_x_Wr0PqF";                    // <<< CHANGE
+
+  fetch(SUPABASE_URL + "/rest/v1/listings?select=name,avatar_count", { headers: { apikey: API_KEY } })
+    .then(r => r.json())
+    .then(d => { document.getElementById("status").textContent = "Supabase says: " + JSON.stringify(d); })
+    .catch(e => { document.getElementById("status").textContent = "Error: " + e; });
+
+  let html = "";
+  for (let i = 1; i <= 20; i++) html += '<div class="row">Scroll test row ' + i + '</div>';
+  document.getElementById("filler").innerHTML = html;
+</script>
+</body>
+</html>
