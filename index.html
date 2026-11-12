@@ -8,42 +8,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Unbounded:wght@600&display=swap" rel="stylesheet">
 <style>
-  :root { --plum:#3A2350; }
+  :root { --ink:#1F2B6B; }
   * { box-sizing:border-box; }
-  html, body { margin:0; background:#EDE6F7; }
+  html, body { margin:0; background:#DDE6F7; }
   .app { width:512px; height:512px; overflow:hidden; display:flex; flex-direction:column;
-         font-family:'Nunito',Arial,sans-serif; color:var(--plum);
-         background:linear-gradient(180deg,#EDF1FF 0%,#FBEAF5 55%,#FFF0E4 100%); }
+         font-family:'Nunito',Arial,sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#EDF3FF 0%,#F5F8FF 50%,#E9FAF7 100%); }
   header { height:92px; flex:none; display:flex; align-items:center; gap:12px; padding:0 18px; position:relative;
-           background:linear-gradient(100deg,#6C8CFF 0%,#FF8FC7 55%,#FFA774 100%); }
-  .badge { width:64px; height:64px; border-radius:50%; background:#fff; display:grid; place-items:center;
-           position:relative; flex:none; box-shadow:0 3px 10px rgba(58,35,80,.18); }
-  .orb { width:42px; height:42px; border-radius:50%;
-         background:radial-gradient(circle at 32% 28%,#fff 0 7%,transparent 8%),
-                    linear-gradient(135deg,#6C8CFF 0%,#FF8FC7 55%,#FFA774 100%);
-         box-shadow:0 0 0 3px #fff, 0 0 0 5px rgba(255,143,199,.45); }
-  .spark { position:absolute; top:3px; right:1px; width:15px; height:15px; }
+           background:linear-gradient(100deg,#4F7CF0 0%,#79C8F8 60%,#63D6CA 100%); color:var(--ink); }
+  .badge { width:66px; height:66px; border-radius:50%; background:#fff; display:grid; place-items:center; flex:none;
+           box-shadow:0 3px 10px rgba(31,43,107,.25); }
+  .badge svg { width:56px; height:56px; display:block; }
   .word { font-family:'Unbounded',Arial,sans-serif; font-weight:600; font-size:30px; line-height:1; letter-spacing:-0.5px; }
-  .by { font-size:13px; font-weight:700; margin-top:5px; opacity:.8; }
+  .by { font-size:13px; font-weight:700; margin-top:5px; opacity:.92; }
   a.close { position:absolute; top:10px; right:14px; width:28px; height:28px; display:grid; place-items:center;
-            color:var(--plum); text-decoration:none; font-size:24px; font-weight:800; line-height:1; }
+            color:var(--ink); text-decoration:none; font-size:24px; font-weight:800; line-height:1; }
   .summary { height:46px; flex:none; display:flex; align-items:center; justify-content:space-between;
              padding:0 16px; font-weight:800; font-size:15px; }
-  .dark { background:var(--plum); color:#fff; border:0; border-radius:999px; font-family:inherit;
+  .dark { background:var(--ink); color:#fff; border:0; border-radius:999px; font-family:inherit;
           font-weight:800; cursor:pointer; text-decoration:none; }
   #refresh { padding:8px 14px; font-size:14px; }
   #list { flex:1; min-height:0; overflow-y:auto; padding:0 12px; display:flex; flex-direction:column; gap:5px; }
   #list::-webkit-scrollbar { width:6px; }
-  #list::-webkit-scrollbar-thumb { background:rgba(58,35,80,.25); border-radius:3px; }
+  #list::-webkit-scrollbar-thumb { background:rgba(31,43,107,.25); border-radius:3px; }
   .row { flex:none; height:62px; display:flex; align-items:center; gap:8px; padding:6px 8px;
-         background:rgba(255,255,255,.7); border-radius:16px; box-shadow:0 2px 6px rgba(58,35,80,.07); }
+         background:rgba(255,255,255,.8); border-radius:16px; box-shadow:0 2px 6px rgba(31,43,107,.08); }
   .thumb { width:132px; height:46px; flex:none; border-radius:10px; background-size:cover; background-position:center; overflow:hidden; }
   .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .info { flex:1; min-width:0; }
   .name { font-weight:800; font-size:16px; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .desc { font-size:12px; margin-top:2px; opacity:.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .count { flex:none; background:#fff; border-radius:999px; padding:6px 10px; font-weight:800; font-size:14px;
-           display:flex; align-items:center; gap:4px; box-shadow:0 1px 4px rgba(58,35,80,.1); }
+           display:flex; align-items:center; gap:4px; box-shadow:0 1px 4px rgba(31,43,107,.12); }
   a.go { flex:none; padding:9px 14px; font-size:14px; }
   footer { height:32px; flex:none; padding:0 18px; display:flex; align-items:center; font-style:italic; font-size:12px; opacity:.8; }
 </style>
@@ -52,8 +48,15 @@
 <div class="app">
   <header>
     <div class="badge">
-      <div class="orb"></div>
-      <svg class="spark" viewBox="0 0 24 24"><path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z" fill="#FF8FC7"/></svg>
+      <svg viewBox="-470 -470 940 940"><defs>
+<linearGradient id="pp-rg" gradientUnits="userSpaceOnUse" x1="-450" y1="-450" x2="450" y2="450"><stop offset="0" stop-color="#8FB0FF"/><stop offset=".5" stop-color="#A8DCFB"/><stop offset="1" stop-color="#8FE6DB"/></linearGradient>
+<linearGradient id="pp-og" gradientUnits="userSpaceOnUse" x1="-326" y1="-326" x2="326" y2="326"><stop offset="0" stop-color="#4F7CF0"/><stop offset=".5" stop-color="#79C8F8"/><stop offset="1" stop-color="#63D6CA"/></linearGradient>
+<linearGradient id="pp-sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF986E"/><stop offset="1" stop-color="#FFB894"/></linearGradient>
+<radialGradient id="pp-hl"><stop offset="0" stop-color="#FFF" stop-opacity=".92"/><stop offset="1" stop-color="#FFF" stop-opacity=".12"/></radialGradient>
+<filter id="pp-bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter></defs><path d="M354.8 -239.3 A428 428 0 1 1 226.8 -363.0" fill="none" stroke="url(#pp-rg)" stroke-width="60" stroke-linecap="round"/><circle r="326" fill="url(#pp-og)"/>
+<ellipse cx="190" cy="235" rx="120" ry="62" transform="rotate(-35 190 235)" fill="#E9FFFA" opacity=".55" filter="url(#pp-bl)"/>
+<ellipse cx="-107" cy="-183" rx="118" ry="58" transform="rotate(-35 -107 -183)" fill="url(#pp-hl)"/>
+<path d="M236.9 -341.9 Q257.9 -257.9 341.9 -236.9 Q257.9 -215.9 236.9 -131.9 Q215.9 -215.9 131.9 -236.9 Q215.9 -257.9 236.9 -341.9 Z" fill="#FFF" stroke="#FFF" stroke-width="40" stroke-linejoin="round"/><path d="M236.9 -341.9 Q257.9 -257.9 341.9 -236.9 Q257.9 -215.9 236.9 -131.9 Q215.9 -215.9 131.9 -236.9 Q215.9 -257.9 236.9 -341.9 Z" fill="url(#pp-sg)"/></svg>
     </div>
     <div>
       <div class="word">passport</div>
@@ -75,9 +78,9 @@
   const SUPABASE_URL = "https://dlcaafqwxbendgksxbae.supabase.co";   // <<< CHANGE (same as your counter script)
   const API_KEY = "sb_publishable__gF9D8Uf51a75w6rbryw6A_x_Wr0PqF";                    // <<< CHANGE (same as your counter script)
   const STALE_MINUTES = 10;   // a room that hasn't reported in this long shows 0 people
-  const DEFAULT_THUMB = "linear-gradient(135deg,#6C8CFF,#FF8FC7 55%,#FFA774)";
+  const DEFAULT_THUMB = "linear-gradient(135deg,#4F7CF0,#79C8F8 55%,#63D6CA)";
 
-  const PERSON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="#3A2350"><circle cx="12" cy="7" r="5"/><path d="M2 22c0-5.5 4.5-9 10-9s10 3.5 10 9z"/></svg>';
+  const PERSON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="#1F2B6B"><circle cx="12" cy="7" r="5"/><path d="M2 22c0-5.5 4.5-9 10-9s10 3.5 10 9z"/></svg>';
   let updatedAt = Date.now();
   let failed = false;
 
