@@ -72,33 +72,35 @@
 </div>
 
 <script>
-  // Sample rooms for now. Swapped for live Supabase data in the next step.
-  const SAMPLE = [
-    {name:"Sunset Beach", description:"Waves, music, and good company", count:21, sim:"Papillon", x:185, y:232, z:25, photo:"", color:"linear-gradient(135deg,#FFA774,#FF8FC7 55%,#6C8CFF)"},
-    {name:"Cozy Living Room", description:"Quiet chat and a warm fire", count:14, sim:"Papillon", x:185, y:232, z:25, photo:"", color:"linear-gradient(135deg,#C98A5B,#FFA774)"},
-    {name:"Midnight Gas Station", description:"Neon, vibes, late-night talks", count:9, sim:"Papillon", x:185, y:232, z:25, photo:"", color:"linear-gradient(135deg,#3A2350,#FF8FC7)"},
-    {name:"Rooftop Lounge", description:"City views and easy conversation", count:5, sim:"Papillon", x:185, y:232, z:25, photo:"", color:"linear-gradient(135deg,#6C8CFF,#3A2350)"},
-    {name:"Garden Patio", description:"A friendly space to meet people", count:2, sim:"Papillon", x:185, y:232, z:25, photo:"", color:"linear-gradient(135deg,#7BC98F,#FFA774)"}
-  ];
+  const SUPABASE_URL = "https://dlcaafqwxbendgksxbae.supabase.co";   // <<< CHANGE (same as your counter script)
+  const API_KEY = "sb_publishable__gF9D8Uf51a75w6rbryw6A_x_Wr0PqF";                    // <<< CHANGE (same as your counter script)
+  const STALE_MINUTES = 10;   // a room that hasn't reported in this long shows 0 people
+  const DEFAULT_THUMB = "linear-gradient(135deg,#6C8CFF,#FF8FC7 55%,#FFA774)";
 
   const PERSON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="#3A2350"><circle cx="12" cy="7" r="5"/><path d="M2 22c0-5.5 4.5-9 10-9s10 3.5 10 9z"/></svg>';
   let updatedAt = Date.now();
+  let failed = false;
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function render(rooms) {
-    rooms = rooms.slice().sort((a, b) => b.count - a.count);   // busiest first
+    rooms = rooms.slice().sort((a, b) => (b.count - a.count) || a.name.localeCompare(b.name));   // busiest first
     const people = rooms.reduce((sum, r) => sum + r.count, 0);
     document.getElementById("summary").textContent =
       rooms.length + (rooms.length === 1 ? " room live" : " rooms live") + " \u00b7 " + people + " people out exploring";
+
+    if (rooms.length === 0) {
+      document.getElementById("list").innerHTML = '<div class="row"><div class="info"><div class="name">No rooms yet</div></div></div>';
+      return;
+    }
 
     document.getElementById("list").innerHTML = rooms.map(r => {
       const link = "secondlife://" + encodeURIComponent(r.sim) + "/" + (Number(r.x) || 128) + "/" + (Number(r.y) || 128) + "/" + (Number(r.z) || 25);
       const thumb = r.photo
         ? '<div class="thumb"><img src="' + esc(r.photo) + '" alt=""></div>'
-        : '<div class="thumb" style="background:' + r.color + '"></div>';
+        : '<div class="thumb" style="background:' + DEFAULT_THUMB + '"></div>';
       return '<div class="row">' + thumb +
         '<div class="info"><div class="name">' + esc(r.name) + '</div><div class="desc">' + esc(r.description) + '</div></div>' +
         '<div class="count">' + PERSON + esc(r.count) + '</div>' +
@@ -107,16 +109,28 @@
   }
 
   function loadRooms() {
-    return Promise.resolve(SAMPLE);   // live Supabase data goes here later
+    const url = SUPABASE_URL + "/rest/v1/listings" +
+      "?select=name,description,photo_url,sim_name,pos_x,pos_y,pos_z,avatar_count,last_seen&active=eq.true";
+    return fetch(url, { headers: { apikey: API_KEY } })
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(rows => rows.map(r => {
+        const fresh = r.last_seen && (Date.now() - new Date(r.last_seen).getTime()) < STALE_MINUTES * 60000;
+        return { name: r.name, description: r.description || "", count: fresh ? r.avatar_count : 0,
+                 sim: r.sim_name, x: r.pos_x, y: r.pos_y, z: r.pos_z, photo: r.photo_url || "" };
+      }));
   }
 
   function refresh() {
-    loadRooms().then(rooms => { render(rooms); updatedAt = Date.now(); tick(); });
+    loadRooms()
+      .then(rooms => { render(rooms); updatedAt = Date.now(); failed = false; tick(); })
+      .catch(() => { failed = true; tick(); });
   }
 
   function tick() {
+    const el = document.getElementById("updated");
+    if (failed) { el.textContent = "Couldn\u2019t update. Press Refresh to try again."; return; }
     const s = Math.floor((Date.now() - updatedAt) / 1000);
-    document.getElementById("updated").textContent = "Updated " + (s < 60 ? s + "s" : Math.floor(s / 60) + "m") + " ago";
+    el.textContent = "Updated " + (s < 60 ? s + "s" : Math.floor(s / 60) + "m") + " ago";
   }
 
   document.getElementById("refresh").addEventListener("click", refresh);
