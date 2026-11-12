@@ -89,7 +89,7 @@
     rooms = rooms.slice().sort((a, b) => (b.count - a.count) || a.name.localeCompare(b.name));   // busiest first
     const people = rooms.reduce((sum, r) => sum + r.count, 0);
     document.getElementById("summary").textContent =
-      rooms.length + (rooms.length === 1 ? " room live" : " rooms live") + " \u00b7 " + people + " people out exploring";
+      rooms.length + (rooms.length === 1 ? " room live" : " rooms live") + " \u00b7 " + people + (people === 1 ? " person" : " people") + " out exploring";
 
     if (rooms.length === 0) {
       document.getElementById("list").innerHTML = '<div class="row"><div class="info"><div class="name">No rooms yet</div></div></div>';
